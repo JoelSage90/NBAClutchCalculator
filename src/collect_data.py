@@ -1,8 +1,8 @@
-from nba_api.stats.endpoints import shotchartdetail, playercareerstats
-from nba_api.stats.static import players
+from nba_api.stats.endpoints import shotchartdetail, playercareerstats, commonteamroster
+from nba_api.stats.static import players, teams
 import pandas as pd
 import time
-import os
+
 
 def get_player_id(player_name):
     """
@@ -97,3 +97,43 @@ def player_shots_csv(player_name):
     player_data.to_csv(f"../data/{player_name_formatted}_clutch.csv", index= False)
 
 
+def all_players():
+    teams_list = teams.get_teams()
+    all_players = []
+    for team in teams_list:
+        team_id = team['id']
+        roster = commonteamroster.CommonTeamRoster(team_id=team_id, season='2024-25')
+        time.sleep(0.5)
+        players_list = roster.get_data_frames()[0]
+        all_players.append(players_list)
+    all_players_df = pd.concat(all_players, ignore_index= True)
+    all_players_df_filtered = all_players_df[['PLAYER','PLAYER_ID']]
+    return all_players_df_filtered
+
+def league_shot_chart():
+    players = all_players()
+    league_shots = []
+    for _,row in players.iterrows():
+        try:
+
+            player_id = row['PLAYER_ID']
+            player_shot_chart = get_season_shot_data(player_id,'2024-25')
+            league_shots.append(player_shot_chart)
+        except Exception as e:
+            print(f"unable to get shots for player:{player_id}")
+            continue
+    league_shots_df = pd.concat(league_shots, ignore_index= True)
+    
+
+    league_shots_filtered = league_shots_df[['MINUTES_REMAINING',
+                                        'EVENT_TYPE', 
+                                        'ACTION_TYPE', 
+                                        'SHOT_TYPE', 
+                                        'SHOT_ZONE_BASIC', 
+                                        'SHOT_ZONE_AREA', 
+                                        'SHOT_ZONE_RANGE', 
+                                        'SHOT_DISTANCE', 
+                                        'LOC_X', 
+                                        'LOC_Y',
+                                        'SHOT_MADE_FLAG']]
+    league_shots_filtered.to_csv(f"../data/all_shots_2024-25.csv", index= False)
