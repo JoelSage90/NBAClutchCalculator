@@ -9,7 +9,7 @@ def get_player_id(player_name):
     get the player id from the give player full name
 
     Parameters:
-        player_name str: full name of player
+        player_name: full name of player
 
     Returns:
         int: player id
@@ -29,10 +29,8 @@ def get_season_shot_data(player_id, season):
     shot data is also filtered to only contain shots taken in the last 5 mins of games (clutch time)
 
     Parameters:
-        player_id 
-        int: id of player to search for from nba data
-        season 
-        str: the season of the shot data
+        player_id: int, id of player to search for from nba data
+        season: str, the season of the shot data
 
     Returns:
         pd.DataFrame: a data frame containing all players shots in last 5 mins of games that season
@@ -76,7 +74,16 @@ def get_season_shot_data(player_id, season):
                                     'SHOT_MADE_FLAG'])
 
 def get_career_shot_data(player_id):
-    time.sleep(1)
+    """
+    this function is used to get all the clutch shots in the players career rather than just one season
+
+    Parameters:
+        player_id: int, id of the player to get shots for
+
+    Returns:
+        pd.DataFrame: data frame containing players career clutch shots
+    """
+    time.sleep(0.5)
     print("fetching player career")
     career = playercareerstats.PlayerCareerStats(player_id= player_id)
     career_df = career.get_data_frames()[0]
@@ -91,6 +98,11 @@ def get_career_shot_data(player_id):
 
 
 def player_shots_csv(player_name):
+    """
+    Creates a CSV files for the career clutch shots
+    Parameters:
+        player_name: str, name of the player to create csv for
+    """
     player_id = get_player_id(player_name)
     player_data = get_career_shot_data(player_id)
     player_name_formatted = player_name.replace(" ", "_")
@@ -98,6 +110,11 @@ def player_shots_csv(player_name):
 
 
 def all_players():
+    """
+    retrives all players from the nba api for the 2024-25 season
+    Returns:
+        pd.DataFrame: data frame of all players in NBA with names and ids
+    """
     teams_list = teams.get_teams()
     all_players = []
     for team in teams_list:
@@ -111,6 +128,9 @@ def all_players():
     return all_players_df_filtered
 
 def league_shot_chart():
+    """
+    Creates a csv file containing all the shots taken by all players in the 2024-25 season
+    """
     players = all_players()
     league_shots = []
     for _,row in players.iterrows():
@@ -136,4 +156,4 @@ def league_shot_chart():
                                         'LOC_X', 
                                         'LOC_Y',
                                         'SHOT_MADE_FLAG']]
-    league_shots_filtered.to_csv(f"../data/all_shots_2024-25.csv", index= False)
+    league_shots_filtered.to_csv("../data/all_shots_2024-25.csv", index= False)
