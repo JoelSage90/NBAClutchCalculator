@@ -22,6 +22,54 @@ def get_player_id(player_name):
         return None
     
 
+def get_season_nonclutch_shot_data(player_id, season):
+    """
+    get the shot data for a specified player from a specific season using the nba api
+
+    Parameters:
+        player_id: int, id of player to search for from nba data
+        season: str, the season of the shot data
+
+    Returns:
+        pd.DataFrame: a data frame containing all players shots in that season
+    """
+    time.sleep(1) #delay added to respect API rate limits
+    print("shot data for season" + str(season))
+    try:
+        #feteches the relevant data of shots from NBA stats API
+        season_shot_chart = shotchartdetail.ShotChartDetail(team_id=0,
+                                                                player_id=player_id,
+                                                                season_nullable=season,
+                                                                season_type_all_star="Regular Season",
+                                                                context_measure_simple="FGA")
+        #remove unnessary columns
+        season_shot_chart_df = season_shot_chart.get_data_frames()[0][['MINUTES_REMAINING',
+                                                                        'EVENT_TYPE', 
+                                                                        'ACTION_TYPE', 
+                                                                        'SHOT_TYPE', 
+                                                                        'SHOT_ZONE_BASIC', 
+                                                                        'SHOT_ZONE_AREA', 
+                                                                        'SHOT_ZONE_RANGE', 
+                                                                        'SHOT_DISTANCE', 
+                                                                        'LOC_X', 
+                                                                        'LOC_Y',
+                                                                        'SHOT_MADE_FLAG']]
+        return season_shot_chart_df
+    except Exception as e:
+        print(f"unable to fetch data for season: {e}")
+        #returns an empty dataframe with matchinh columns
+        return pd.DataFrame(columns=['MINUTES_REMAINING',
+                                    'EVENT_TYPE', 
+                                    'ACTION_TYPE', 
+                                    'SHOT_TYPE', 
+                                    'SHOT_ZONE_BASIC', 
+                                    'SHOT_ZONE_AREA', 
+                                    'SHOT_ZONE_RANGE', 
+                                    'SHOT_DISTANCE', 
+                                    'LOC_X', 
+                                    'LOC_Y',
+                                    'SHOT_MADE_FLAG'])
+
 
 def get_season_shot_data(player_id, season):
     """
@@ -118,7 +166,9 @@ def all_players():
     teams_list = teams.get_teams()
     all_players = []
     for team in teams_list:
+        
         team_id = team['id']
+        print(f"getting data for team {team_id}")
         roster = commonteamroster.CommonTeamRoster(team_id=team_id, season='2024-25')
         time.sleep(0.5)
         players_list = roster.get_data_frames()[0]
@@ -127,25 +177,18 @@ def all_players():
     all_players_df_filtered = all_players_df[['PLAYER','PLAYER_ID']]
     return all_players_df_filtered
 
+
 def league_shot_chart():
     """
     Creates a csv file containing all the shots taken by all players in the 2024-25 season
     """
     players = all_players()
-    league_shots = []
+    header_write = True
     for _,row in players.iterrows():
         try:
-
             player_id = row['PLAYER_ID']
-            player_shot_chart = get_season_shot_data(player_id,'2024-25')
-            league_shots.append(player_shot_chart)
-        except Exception as e:
-            print(f"unable to get shots for player:{player_id}")
-            continue
-    league_shots_df = pd.concat(league_shots, ignore_index= True)
-    
-
-    league_shots_filtered = league_shots_df[['MINUTES_REMAINING',
+            player_shot_chart = get_season_nonclutch_shot_data(player_id,'2024-25')
+            player_shot_chart_filtered = player_shot_chart[['MINUTES_REMAINING',
                                         'EVENT_TYPE', 
                                         'ACTION_TYPE', 
                                         'SHOT_TYPE', 
@@ -156,4 +199,11 @@ def league_shot_chart():
                                         'LOC_X', 
                                         'LOC_Y',
                                         'SHOT_MADE_FLAG']]
-    league_shots_filtered.to_csv("../data/all_shots_2024-25.csv", index= False)
+            #append to csv file on each iteration
+            player_shot_chart_filtered.to_csv("../data/all_shots_2024-25.csv", index= False, mode= "a", header=header_write)
+            header_write = False
+        except Exception as e:
+            print(f"unable to get shots for player:{player_id}")
+            continue
+
+league_shot_chart()
