@@ -19,12 +19,15 @@ x = pd.get_dummies(league_shots[features],drop_first=True) #one-hot encoding for
 y = league_shots[target]
 x_train,x_test,y_train,y_test = train_test_split(x,y,test_size=0.2, random_state=67)
 
-model = LogisticRegression()
+model = LogisticRegression(solver="liblinear",max_iter=1000)
 model.fit(x_train,y_train)
 joblib.dump(model, "../models/logistic_regression_shot_mode.joblib")
 
+y_pred = model.predict_proba(x_test)[:,0]
 y_prob = model.predict_proba(x_test)[:,1]
 model_eval_df = x_test.copy()
+model_eval_df["prediction"] = y_pred
 model_eval_df["expected prob"] = y_prob
 model_eval_df["actual"] = y_test
 model_eval_df.to_csv("../data/model_eval.csv", index= False)
+print(model_eval_df.head(20))
