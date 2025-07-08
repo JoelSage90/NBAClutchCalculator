@@ -37,7 +37,7 @@ def clutch_points(df):
     df["model_prob"] = y
     df["BASE_POINTS"] = df['SHOT_TYPE'].apply(lambda x: 3 if x == "3PT Field Goal" else 2)
     df["CLUTCH_MULTI"] = df["MINUTES_REMAINING"].apply(clutch_multipler)
-    df["CLUTCH_POINT"] = df["BASE_POINTS"] * ((1-df["model_prob"])* df["CLUTCH_MULTI"])
+    df["CLUTCH_POINTS"] = df["BASE_POINTS"] * ((1-df["model_prob"])* df["CLUTCH_MULTI"])
     return df
          
 def clutchness_calculator(df):
@@ -46,10 +46,14 @@ def clutchness_calculator(df):
     Parameters:
         df: dataframe with clutch points for each shot
     """
-    potential_clutch_points = df["CLUTCH_POINTS"].sum()
-    actual_clutch_points = df[df["SHOT_MADE_FLAG"] ==1]["CLUTCH_POINTS"].sum()
+    clutch_df = clutch_points(df)
+    potential_clutch_points = clutch_df["CLUTCH_POINTS"].sum()
+    actual_clutch_points = clutch_df[clutch_df["SHOT_MADE_FLAG"] ==1]["CLUTCH_POINTS"].sum()
     clutchness = (actual_clutch_points/potential_clutch_points) *100
     return clutchness
-            
+
+#testing
+steph_curry = pd.read_csv("../data/Stephen_Curry_Clutch.csv")
+print(clutchness_calculator(steph_curry))
 
 
