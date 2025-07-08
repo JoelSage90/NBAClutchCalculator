@@ -1,6 +1,8 @@
 import joblib
 import pandas as pd
-model = joblib.load("../models/logistic_regression_shot_mode.joblib")
+model = joblib.load("../models/logistic_regression_shot_model.joblib")
+model_columns = joblib.load("../models/logistic_regression_shot_model_columns.joblib")
+
 
 def clutch_multipler(min_left):
     """
@@ -33,6 +35,7 @@ def clutch_points(df):
             "LOC_Y"]
 
     x = pd.get_dummies(df[features],drop_first=True)
+    x = x.reindex(columns=model_columns, fill_value=0)
     y = model.predict_proba(x)[:,1]
     df["model_prob"] = y
     df["BASE_POINTS"] = df['SHOT_TYPE'].apply(lambda x: 3 if x == "3PT Field Goal" else 2)

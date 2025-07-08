@@ -16,12 +16,13 @@ features = ["MINUTES_REMAINING",
 target = "SHOT_MADE_FLAG"
 
 x = pd.get_dummies(league_shots[features],drop_first=True) #one-hot encoding for the features
+joblib.dump(x.columns, "../models/logistic_regression_shot_model_columns.joblib")
 y = league_shots[target]
 x_train,x_test,y_train,y_test = train_test_split(x,y,test_size=0.2, random_state=67)
 
 model = LogisticRegression(solver="liblinear",max_iter=1000)
 model.fit(x_train,y_train)
-joblib.dump(model, "../models/logistic_regression_shot_mode.joblib")
+joblib.dump(model, "../models/logistic_regression_shot_model.joblib")
 
 y_pred = model.predict_proba(x_test)[:,0]
 y_prob = model.predict_proba(x_test)[:,1]
