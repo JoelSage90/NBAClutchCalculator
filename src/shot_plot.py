@@ -97,6 +97,13 @@ def shot_section(r, theta):
 
 
 def draw_heat_map(player_df):
+    max_fg = max(v[0] for v in section_percentages.values())
+    cmap = cm.RdYlGn
+    def get_colour(percent):
+        #returns a colour based on percentage
+        norm = colors.Normalize(vmin=0, vmax=max_fg) #normalise relative to the players fg%
+        return cmap(norm(percent))
+    
     fig,ax = draw_half_court()
     #adjust coords to match mplbasketball coords system
     player_df["LOC_X_ft"] = player_df["LOC_X"]/10
@@ -132,4 +139,61 @@ def draw_heat_map(player_df):
         #convert from polar to x and y
         x =r_mid * np.cos(t_mid) -41.75
         y =r_mid * np.sin(t_mid)
-        ax.text(x,y,f"{section_percentages[section][1]}/{section_percentages[section][2]}", ha="center", va="center",rotation= t3)
+        ax.text(x,y,
+                f"{section_percentages[section][1]}/{section_percentages[section][2]}", 
+                ha="center", va="center",rotation= t3)
+    #drawing sections
+
+    #[section name,r1,r1,theta1,theta2] <- sections with polar coords
+    sections_dimensions_non_corner = [['layup',0,8,0,360,],
+                           ['left close midrange',8,17,120,theta5],
+                           ['centre close midrange',8,17,theta5,-theta5],
+                           ['right close midrange',8,17,-120,-theta5],
+                           ['left wing midrange',17,23.7,theta4,theta3],
+                           ['centre midrange',17,23.7,theta3,-theta3],
+                           ['right wing midrange',17,23.7,-theta3,-theta4],
+                           ['left wing three',23.7,30,theta4,theta3],
+                           ['centre three',23.7,30,theta3,-theta3],
+                           ['right wing three',23.7,30,-theta3,-theta4],
+                           ['deep three',30,50,theta4,-theta4]]
+    #[section name, r1, theta1, x1,x2,y1] <- parameters for draw corner section method
+    corner_dimensions = [['left corner midrange',17,180,theta4,-47,-33,22],
+                         ['right corner midrange',17,-180,-theta4,-47,-33,-22],
+                         ['left corner three',30,180,theta4,-47,-33,22],
+                         ['right corner three',30,-180,-theta4,-47,-33,-22]]
+    
+    for sec in sections_dimensions_non_corner:
+        sec_name = sec[0]
+        non_corner_section = draw_sections(sec[1],sec[2],sec[3],sec[4],
+                                           get_colour(section_percentages[sec_name][0]),
+                                           section_percentages[sec_name][0])
+        ax.add_patch(non_corner_section)
+    for cor in corner_dimensions:
+        cor_name = cor[0]
+        corner_section = draw_corner_sections(cor[1],cor[2],cor[3],cor[4],cor[5],cor[6],
+                                              get_colour(section_percentages[cor_name][0]),
+                                              section_percentages[cor_name][0])
+        ax.add_patch(corner_section)
+
+    #drawing labels for sections
+    #[r1,r2,t1,t2,section name,t3]
+    section_label = [[0,8,0,0,'layup',0],
+                     [8,17,0,0,'centre close midrange',0],
+                     [8,17,120,theta5,'left close midrange',0],
+                     [8,17,-120,-theta5,'right close midrange',0],
+                     [17,23,theta4,theta3,'left wing midrange',theta5],
+                     [17,23,0,0,'centre midrange',0],
+                     [17,23,-theta4,-theta3,'right wing midrange',-theta5],
+                     [23,30,theta4,theta3,'left wing three',theta5],
+                     [23,30,-theta4,-theta3,'right wing three',-theta5],
+                     [23,30,0,0,'centre three',0],
+                     [30,37,0,0,'deep three',0]]
+    #[x,y,section name]
+    corner_label = [[-41.75,20,'left corner midrange'],
+                    [-41.75,23,'left corner three'],
+                    [-41.75,-20,'right corner midrange'],
+                    [-41.75,-23,'right corner three']]
+    for sb in section_label:
+        label_section(sb[0],sb[1],sb[2],sb[3],sb[4],sb[5])
+    for cb in corner_label:
+        ax.text(cb[0],cb[1],f"{section_percentages[cb[2]][1]}/{section_percentages[cb[2]][2]}", ha="center", va="center")
