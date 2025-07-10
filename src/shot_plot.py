@@ -97,12 +97,6 @@ def shot_section(r, theta):
 
 
 def draw_heat_map(player_df):
-    max_fg = max(v[0] for v in section_percentages.values())
-    cmap = cm.RdYlGn
-    def get_colour(percent):
-        #returns a colour based on percentage
-        norm = colors.Normalize(vmin=0, vmax=max_fg) #normalise relative to the players fg%
-        return cmap(norm(percent))
     
     fig,ax = draw_half_court()
     #adjust coords to match mplbasketball coords system
@@ -132,7 +126,13 @@ def draw_heat_map(player_df):
             section_value_list.append(len(player_df[player_df["SHOT_SECTION"] == section])) #number of taken shots
             #[percentage,madeshots,taken shots]
             section_percentages[section] = section_value_list
-
+    max_fg = max(v[0] for v in section_percentages.values())
+    cmap = cm.RdYlGn
+    def get_colour(percent):
+        #returns a colour based on percentage
+        norm = colors.Normalize(vmin=0, vmax=max_fg) #normalise relative to the players fg%
+        return cmap(norm(percent))
+    
     def label_section(r1,r2,t1,t2,section,t3):
         r_mid = (r1+r2)/2
         t_mid = np.radians((t1+t2)/2)
@@ -146,9 +146,9 @@ def draw_heat_map(player_df):
 
     #[section name,r1,r1,theta1,theta2] <- sections with polar coords
     sections_dimensions_non_corner = [['layup',0,8,0,360,],
-                           ['left close midrange',8,17,120,theta5],
+                           ['left close midrange',8,17,180,theta5],
                            ['centre close midrange',8,17,theta5,-theta5],
-                           ['right close midrange',8,17,-120,-theta5],
+                           ['right close midrange',8,17,-180,-theta5],
                            ['left wing midrange',17,23.7,theta4,theta3],
                            ['centre midrange',17,23.7,theta3,-theta3],
                            ['right wing midrange',17,23.7,-theta3,-theta4],
@@ -163,17 +163,28 @@ def draw_heat_map(player_df):
                          ['right corner three',30,-180,-theta4,-47,-33,-22]]
     
     for sec in sections_dimensions_non_corner:
-        sec_name = sec[0]
-        non_corner_section = draw_sections(sec[1],sec[2],sec[3],sec[4],
-                                           get_colour(section_percentages[sec_name][0]),
-                                           section_percentages[sec_name][0])
-        ax.add_patch(non_corner_section)
+        try:
+            sec_name = sec[0]
+            non_corner_section = draw_sections(sec[1],sec[2],sec[3],sec[4],
+                                            get_colour(section_percentages[sec_name][0]),
+                                            section_percentages[sec_name][0])
+            ax.add_patch(non_corner_section)
+        except Exception as e:
+            print(f"unable to get draw section for: {sec_name}")
+            ax.add_patch(draw_sections(sec[1],sec[2],sec[3],sec[4],get_colour(0),0))
+            continue
     for cor in corner_dimensions:
-        cor_name = cor[0]
-        corner_section = draw_corner_sections(cor[1],cor[2],cor[3],cor[4],cor[5],cor[6],
-                                              get_colour(section_percentages[cor_name][0]),
-                                              section_percentages[cor_name][0])
-        ax.add_patch(corner_section)
+        try:
+
+            cor_name = cor[0]
+            corner_section = draw_corner_sections(cor[1],cor[2],cor[3],cor[4],cor[5],cor[6],
+                                                get_colour(section_percentages[cor_name][0]),
+                                                section_percentages[cor_name][0])
+            ax.add_patch(corner_section)
+        except Exception as e:
+            print(f"unable to get draw section for: {sec_name}")
+            ax.add_patch(draw_corner_sections(cor[1],cor[2],cor[3],cor[4],cor[5],cor[6],get_colour(0),0))
+            continue
 
     #drawing labels for sections
     #[r1,r2,t1,t2,section name,t3]
@@ -194,6 +205,29 @@ def draw_heat_map(player_df):
                     [-41.75,-20,'right corner midrange'],
                     [-41.75,-23,'right corner three']]
     for sb in section_label:
-        label_section(sb[0],sb[1],sb[2],sb[3],sb[4],sb[5])
+        try:
+
+            label_section(sb[0],sb[1],sb[2],sb[3],sb[4],sb[5])
+        except Exception as e:
+            print(f"unable to get label for section: {sb[4]}")
+            ax.text(cb[0],cb[1],"0/0", ha="center", va="center")
+            continue
     for cb in corner_label:
-        ax.text(cb[0],cb[1],f"{section_percentages[cb[2]][1]}/{section_percentages[cb[2]][2]}", ha="center", va="center")
+        try:
+            ax.text(cb[0],cb[1],f"{section_percentages[cb[2]][1]}/{section_percentages[cb[2]][2]}", ha="center", va="center")
+        except Exception as e:
+            print(f"unable to get label for section: {cb[2]}")
+            ax.text(cb[0],cb[1],"0/0", ha="center", va="center")
+            continue
+
+    plt.show()
+
+#testing
+curry = pd.read_csv("../data/Stephen_Curry_clutch.csv")
+draw_heat_map(curry)
+
+
+lebron = pd.read_csv("../data/Lebron_James_clutch.csv")
+draw_heat_map(lebron)
+mj = pd.read_csv("../data/Michael_Jordan_clutch.csv")
+draw_heat_map(mj)
