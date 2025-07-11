@@ -47,7 +47,7 @@ def clutchness_calculator(df):
     """
     uses the clutch points generated from model and formula to calculate overall clutchness
     Parameters:
-        df: dataframe with clutch points for each shot
+        df: players clutch shots
     """
     clutch_df = clutch_points(df)
     potential_clutch_points = clutch_df["CLUTCH_POINTS"].sum()
@@ -58,11 +58,11 @@ def clutchness_calculator(df):
     return clutchness
 
 #testing
-mj = pd.read_csv("../data/Michael_Jordan_Clutch.csv")
+#mj = pd.read_csv("../data/Michael_Jordan_Clutch.csv")
 wardell = pd.read_csv("../data/Stephen_Curry_Clutch.csv")
 lebron = pd.read_csv("../data/Lebron_James_Clutch.csv")
 durant = pd.read_csv("../data/Kevin_Durant_Clutch.csv")
-print(f"micheal jordan: {clutchness_calculator(mj)}")
+#print(f"micheal jordan: {clutchness_calculator(mj)}")
 print(f"kevin durant: {clutchness_calculator(durant)}")
 print(f"steph curry: {clutchness_calculator(wardell)}")
 print(f"lebron: {clutchness_calculator(lebron)}")

@@ -139,9 +139,14 @@ def draw_heat_map(player_df):
         #convert from polar to x and y
         x =r_mid * np.cos(t_mid) -41.75
         y =r_mid * np.sin(t_mid)
-        ax.text(x,y,
-                f"{section_percentages[section][1]}/{section_percentages[section][2]}", 
-                ha="center", va="center",rotation= t3)
+        try:
+            ax.text(x,y,
+                    f"{section_percentages[section][1]}/{section_percentages[section][2]}", 
+                    ha="center", va="center",rotation= t3)
+        except Exception as e:
+            ax.text(x,y,
+                    f"0/0", 
+                    ha="center", va="center",rotation= t3)
     #drawing sections
 
     #[section name,r1,r1,theta1,theta2] <- sections with polar coords
@@ -210,7 +215,7 @@ def draw_heat_map(player_df):
             label_section(sb[0],sb[1],sb[2],sb[3],sb[4],sb[5])
         except Exception as e:
             print(f"unable to get label for section: {sb[4]}")
-            ax.text(cb[0],cb[1],"0/0", ha="center", va="center")
+            label_section(sb[0],sb[1],sb[2],sb[3],sb[4],sb[5])
             continue
     for cb in corner_label:
         try:
@@ -220,14 +225,4 @@ def draw_heat_map(player_df):
             ax.text(cb[0],cb[1],"0/0", ha="center", va="center")
             continue
 
-    plt.show()
-
-#testing
-curry = pd.read_csv("../data/Stephen_Curry_clutch.csv")
-draw_heat_map(curry)
-
-
-lebron = pd.read_csv("../data/Lebron_James_clutch.csv")
-draw_heat_map(lebron)
-mj = pd.read_csv("../data/Michael_Jordan_clutch.csv")
-draw_heat_map(mj)
+    return fig,ax

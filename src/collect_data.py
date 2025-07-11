@@ -204,6 +204,3 @@ def league_shot_chart():
         except Exception as e:
             print(f"unable to get shots for player:{player_id}")
             continue
-
-
-player_shots_csv("Michael Jordan")
