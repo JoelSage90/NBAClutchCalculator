@@ -1,6 +1,8 @@
 import joblib
 import pandas as pd
-model = joblib.load("../models/logistic_regression_shot_mode.joblib")
+model = joblib.load("../models/logistic_regression_shot_model.joblib")
+model_columns = joblib.load("../models/logistic_regression_shot_model_columns.joblib")
+
 
 def clutch_multipler(min_left):
     """
@@ -33,6 +35,7 @@ def clutch_points(df):
             "LOC_Y"]
 
     x = pd.get_dummies(df[features],drop_first=True)
+    x = x.reindex(columns=model_columns, fill_value=0)
     y = model.predict_proba(x)[:,1]
     df["model_prob"] = y
     df["BASE_POINTS"] = df['SHOT_TYPE'].apply(lambda x: 3 if x == "3PT Field Goal" else 2)
@@ -49,11 +52,19 @@ def clutchness_calculator(df):
     clutch_df = clutch_points(df)
     potential_clutch_points = clutch_df["CLUTCH_POINTS"].sum()
     actual_clutch_points = clutch_df[clutch_df["SHOT_MADE_FLAG"] ==1]["CLUTCH_POINTS"].sum()
-    clutchness = (actual_clutch_points/potential_clutch_points) *100
+    clutchness = (actual_clutch_points/potential_clutch_points) *200
+    if clutchness > 100: #cap the clutch rating at 100
+        clutchness = 100
     return clutchness
 
 #testing
-steph_curry = pd.read_csv("../data/Stephen_Curry_Clutch.csv")
-print(clutchness_calculator(steph_curry))
+mj = pd.read_csv("../data/Michael_Jordan_Clutch.csv")
+wardell = pd.read_csv("../data/Stephen_Curry_Clutch.csv")
+lebron = pd.read_csv("../data/Lebron_James_Clutch.csv")
+durant = pd.read_csv("../data/Kevin_Durant_Clutch.csv")
+print(f"micheal jordan: {clutchness_calculator(mj)}")
+print(f"kevin durant: {clutchness_calculator(durant)}")
+print(f"steph curry: {clutchness_calculator(wardell)}")
+print(f"lebron: {clutchness_calculator(lebron)}")
 
 

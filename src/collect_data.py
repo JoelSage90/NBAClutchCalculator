@@ -18,8 +18,7 @@ def get_player_id(player_name):
     player_dict = players.find_players_by_full_name(player_name)
     if player_dict != None:
         return player_dict[0]["id"]
-    else:
-        return None
+    return None
     
 
 def get_season_nonclutch_shot_data(player_id, season):
@@ -206,4 +205,5 @@ def league_shot_chart():
             print(f"unable to get shots for player:{player_id}")
             continue
 
-league_shot_chart()
+
+player_shots_csv("Michael Jordan")
