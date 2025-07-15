@@ -33,10 +33,11 @@ def clutch_points(df):
             "SHOT_DISTANCE",
             "LOC_X",
             "LOC_Y"]
-
     x = pd.get_dummies(df[features],drop_first=True)
     x = x.reindex(columns=model_columns, fill_value=0)
+    x = x.fillna(0)
     y = model.predict_proba(x)[:,1]
+    
     df["model_prob"] = y
     df["BASE_POINTS"] = df['SHOT_TYPE'].apply(lambda x: 3 if x == "3PT Field Goal" else 2)
     df["CLUTCH_MULTI"] = df["MINUTES_REMAINING"].apply(clutch_multipler)
