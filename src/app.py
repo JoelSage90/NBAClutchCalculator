@@ -5,6 +5,23 @@ import matplotlib.pyplot as plt
 from collect_data import get_career_shot_data
 from shot_plot import draw_heat_map
 from clutch_score import clutchness_calculator
+def clutch_shooting(data):
+    total_made = 0
+    total_attempts = 0
+    highest_fgp_section = None
+    highest_fgp = 0
+
+    for section, stats in data.items():
+        fgp, made, attempted = stats
+        total_made += made
+        total_attempts += attempted
+
+        if fgp > highest_fgp:
+            highest_fgp = fgp
+            highest_fgp_section = section
+
+    overall_fgp = total_made / total_attempts if total_attempts else 0
+    return highest_fgp_section,highest_fgp,overall_fgp
 
 st.set_page_config(layout="wide")
 
@@ -28,8 +45,9 @@ if player is not None:
             player_id = player_list.loc[player_list["PLAYER"] == player, "PLAYER_ID"].values[0]
             player_df = get_career_shot_data(player_id)
     #plot the clutch shots
+    fig,ax,section_percentage = draw_heat_map(player_df)
+    section,section_fgp,overall = clutch_shooting(section_percentage)
     with col1:
-        fig,ax = draw_heat_map(player_df)
         st.pyplot(fig)
     with col2:
         st.markdown("### Player Info")
@@ -41,7 +59,11 @@ if player is not None:
         with nested_col2:
             clutchness = clutchness_calculator(player_df)
             st.markdown(f"**Player Name:** {player}")
+            st.markdown(f"**Overall fgp:** {overall:.3f}")
+            st.markdown(f"**Best Section:** {section} {section_fgp:.3f}")
+            print(section_percentage)
         clutchness = clutchness_calculator(player_df)
+        #change formatting for this
         st.markdown(f"Clutchness: {clutchness:.2f}/100")
 else:
     st.info("Select a player to see how clutch they are.")

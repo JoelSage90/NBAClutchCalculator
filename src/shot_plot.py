@@ -225,4 +225,4 @@ def draw_heat_map(player_df):
             ax.text(cb[0],cb[1],"0/0", ha="center", va="center")
             continue
 
-    return fig,ax
+    return fig,ax,section_percentages
