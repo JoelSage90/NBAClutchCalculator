@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+from streamviz import gauge
 
 from collect_data import get_career_shot_data
 from shot_plot import draw_heat_map
@@ -33,7 +34,7 @@ player = st.selectbox("select a player",player_list["PLAYER"].unique(), index= N
 
 #check for players who are already saved rather than making an api call
 cached_players = ["Kevin Durant","Stephen Curry", "LeBron James"]
-col1,col2 = st.columns([2,1])
+col1,col2 = st.columns([1,1.1])
 if player is not None:
     if player in cached_players:
         filename = "../data/"+player.replace(" ", "_") + "_clutch.csv"
@@ -64,6 +65,13 @@ if player is not None:
             print(section_percentage)
         clutchness = clutchness_calculator(player_df)
         #change formatting for this
-        st.markdown(f"Clutchness: {clutchness:.2f}/100")
+        
+        gauge(gVal=(clutchness/100),
+              gTitle="Clutchness",
+              grLow=0.5,
+              grMid=0.6,
+              gTheme= "White")
+
+        
 else:
     st.info("Select a player to see how clutch they are.")

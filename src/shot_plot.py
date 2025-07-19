@@ -8,7 +8,7 @@ import numpy as np
 
 def draw_half_court():
     court_nba = Court(court_type="nba", units="ft", origin="center")
-    fig, ax = plt.subplots(figsize=(10, 7))
+    fig, ax = plt.subplots(figsize=(10, 5))
     court_nba.draw(ax=ax)
     ax.set_xlim(left= -47,right=-1)
     ax.set_ylim(bottom=-25,top=25)
@@ -142,11 +142,11 @@ def draw_heat_map(player_df):
         try:
             ax.text(x,y,
                     f"{section_percentages[section][1]}/{section_percentages[section][2]}", 
-                    ha="center", va="center",rotation= t3)
+                    ha="center", va="center",rotation= t3, fontsize = 7)
         except Exception as e:
             ax.text(x,y,
                     f"0/0", 
-                    ha="center", va="center",rotation= t3)
+                    ha="center", va="center",rotation= t3,fontsize = 7)
     #drawing sections
 
     #[section name,r1,r1,theta1,theta2] <- sections with polar coords
@@ -219,10 +219,10 @@ def draw_heat_map(player_df):
             continue
     for cb in corner_label:
         try:
-            ax.text(cb[0],cb[1],f"{section_percentages[cb[2]][1]}/{section_percentages[cb[2]][2]}", ha="center", va="center")
+            ax.text(cb[0],cb[1],f"{section_percentages[cb[2]][1]}/{section_percentages[cb[2]][2]}", ha="center", va="center", fontsize = 7)
         except Exception as e:
             print(f"unable to get label for section: {cb[2]}")
-            ax.text(cb[0],cb[1],"0/0", ha="center", va="center")
+            ax.text(cb[0],cb[1],"0/0", ha="center", va="center", fontsize = 7)
             continue
 
     return fig,ax,section_percentages
