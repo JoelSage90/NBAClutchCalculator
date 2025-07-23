@@ -15,7 +15,7 @@ st.set_page_config(layout="wide")
 
 st.title("NBA Clutchness Calculator")
 st.subheader("Select a player and see how clutch they are")
-player_list = pd.read_csv("../data/players.csv")
+player_list = pd.read_csv("/data/players.csv")
 player = st.selectbox("select a player",player_list["PLAYER"].unique(), index= None)
 
 #check for players who are already saved rather than making an api call

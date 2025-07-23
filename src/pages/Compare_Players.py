@@ -10,7 +10,7 @@ from display_clutchness import display_clutchness,compare_clutchness
 
 st.title("NBA Clutchness Comparer")
 st.subheader("Select 2 players and compare clutch they are")
-player_list = pd.read_csv("../data/players.csv")
+player_list = pd.read_csv("/data/players.csv")
 select_col1,select_col2 = st.columns(2)
 cached_players = ["Kevin Durant","Stephen Curry", "LeBron James"]
 with select_col1:

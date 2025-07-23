@@ -153,7 +153,7 @@ def player_shots_csv(player_name):
     player_id = get_player_id(player_name)
     player_data = get_career_shot_data(player_id)
     player_name_formatted = player_name.replace(" ", "_")
-    player_data.to_csv(f"../data/{player_name_formatted}_clutch.csv", index= False)
+    player_data.to_csv(f"/data/{player_name_formatted}_clutch.csv", index= False)
 
 
 def all_players():
@@ -199,7 +199,7 @@ def league_shot_chart():
                                         'LOC_Y',
                                         'SHOT_MADE_FLAG']]
             #append to csv file on each iteration
-            player_shot_chart_filtered.to_csv("../data/all_shots_2024-25.csv", index= False, mode= "a", header=header_write)
+            player_shot_chart_filtered.to_csv("/data/all_shots_2024-25.csv", index= False, mode= "a", header=header_write)
             header_write = False
         except Exception as e:
             print(f"unable to get shots for player:{player_id}")

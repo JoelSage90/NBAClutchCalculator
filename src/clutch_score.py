@@ -1,7 +1,7 @@
 import joblib
 import pandas as pd
-model = joblib.load("../models/logistic_regression_shot_model.joblib")
-model_columns = joblib.load("../models/logistic_regression_shot_model_columns.joblib")
+model = joblib.load("/models/logistic_regression_shot_model.joblib")
+model_columns = joblib.load("/models/logistic_regression_shot_model_columns.joblib")
 
 
 def clutch_multipler(min_left):
