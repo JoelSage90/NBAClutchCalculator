@@ -29,7 +29,7 @@ def clutch_shooting(data):
 def display_clutchness(player,col1,col2,player_list,cached_players):
     if player is not None:
         if player in cached_players:
-            filename = base_dir / "data" / player.replace(" ", "_") + "_clutch.csv"
+            filename = base_dir / "data" / (player.replace(" ", "_") + "_clutch.csv")
             player_id = player_list.loc[player_list["PLAYER"] == player, "PLAYER_ID"].values[0]
             player_df = pd.read_csv(filename)
         else:
@@ -70,7 +70,7 @@ def display_clutchness(player,col1,col2,player_list,cached_players):
     
 def compare_clutchness(player,player_list,cached_players):
     if player in cached_players:
-            filename = base_dir / "data" / player.replace(" ", "_") + "_clutch.csv"
+            filename = base_dir / "data" / (player.replace(" ", "_") + "_clutch.csv")
             player_id = player_list.loc[player_list["PLAYER"] == player, "PLAYER_ID"].values[0]
             player_df = pd.read_csv(filename)
     else:
