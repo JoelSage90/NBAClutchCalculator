@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 
 from display_clutchness import display_clutchness,compare_clutchness
-base_dir = Path(__file__).resolve().parent.parent
+base_dir = Path(__file__).resolve().parent.parent.parent
 players_csv_path = base_dir / "data" / "players.csv"
 
 
