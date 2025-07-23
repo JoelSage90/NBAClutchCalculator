@@ -1,7 +1,13 @@
 import joblib
+from pathlib import Path
 import pandas as pd
-model = joblib.load("/models/logistic_regression_shot_model.joblib")
-model_columns = joblib.load("/models/logistic_regression_shot_model_columns.joblib")
+
+
+base_dir = Path(__file__).resolve().parent.parent
+model_path = base_dir / "models" / "logistic_regression_shot_model.joblib"
+columns_path = base_dir / "models" / "logistic_regression_shot_model_columns.joblib"
+model = joblib.load(model_path)
+model_columns = joblib.load(columns_path)
 
 
 def clutch_multipler(min_left):
