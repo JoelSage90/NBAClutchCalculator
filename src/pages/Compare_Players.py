@@ -3,14 +3,17 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-
+from pathlib import Path
 
 from display_clutchness import display_clutchness,compare_clutchness
+base_dir = Path(__file__).resolve().parent.parent
+players_csv_path = base_dir / "data" / "players.csv"
+
 
 
 st.title("NBA Clutchness Comparer")
 st.subheader("Select 2 players and compare clutch they are")
-player_list = pd.read_csv("/data/players.csv")
+player_list = pd.read_csv(players_csv_path)
 select_col1,select_col2 = st.columns(2)
 cached_players = ["Kevin Durant","Stephen Curry", "LeBron James"]
 with select_col1:

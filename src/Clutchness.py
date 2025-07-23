@@ -4,7 +4,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 from streamviz import gauge
-
+from pathlib import Path
 from collect_data import get_career_shot_data
 from shot_plot import draw_heat_map
 from clutch_score import clutchness_calculator
@@ -12,10 +12,15 @@ from display_clutchness import display_clutchness
 
 st.set_page_config(layout="wide")
 
+base_dir = Path(__file__).resolve().parent.parent
+
+
+players_csv_path = base_dir / "data" / "players.csv"
+
 
 st.title("NBA Clutchness Calculator")
 st.subheader("Select a player and see how clutch they are")
-player_list = pd.read_csv("/data/players.csv")
+player_list = pd.read_csv(players_csv_path)
 player = st.selectbox("select a player",player_list["PLAYER"].unique(), index= None)
 
 #check for players who are already saved rather than making an api call
