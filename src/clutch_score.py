@@ -58,14 +58,5 @@ def clutchness_calculator(df):
         clutchness = 100
     return clutchness
 
-#testing
-#mj = pd.read_csv("../data/Michael_Jordan_Clutch.csv")
-wardell = pd.read_csv("../data/Stephen_Curry_Clutch.csv")
-lebron = pd.read_csv("../data/Lebron_James_Clutch.csv")
-durant = pd.read_csv("../data/Kevin_Durant_Clutch.csv")
-#print(f"micheal jordan: {clutchness_calculator(mj)}")
-print(f"kevin durant: {clutchness_calculator(durant)}")
-print(f"steph curry: {clutchness_calculator(wardell)}")
-print(f"lebron: {clutchness_calculator(lebron)}")
 
 

@@ -31,4 +31,3 @@ model_eval_df["prediction"] = y_pred
 model_eval_df["expected prob"] = y_prob
 model_eval_df["actual"] = y_test
 model_eval_df.to_csv("../data/model_eval.csv", index= False)
-print(model_eval_df.head(20))
