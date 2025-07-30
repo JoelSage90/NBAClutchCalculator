@@ -33,9 +33,7 @@ NBAClutchCalculator/
 └── requirements.txt       # Python dependencies
 ```
 ## 🧩 Installation & Running Locally
-**Prerequisites:**
 
-Python 3.8+
 
 **Install dependencies:**
 ```bash
@@ -45,18 +43,21 @@ pip install -r requirements.txt
 ```
 **Run the app:**
 ```bash
-streamlit run streamlit_app.py
+cd src
+streamlit run Clutchness.py
 ```
 📷 Screenshots
-Web App Interface
+![Web App Interface]
 
-Side-by-Side Player Comparison
+![Side-by-Side Player Comparison]
+
 
 ## 🧪 Model Evaluation
-The clutchness metric was tested against historical data to assess reliability. Below are examples of model output for key players:
+The clutchness metric was done with weighting of shots then using a machine learning model to predict the likelyhood of a player making a shot and comparing this to weather the player actually made it or not. Shots which were less likely to go in are rewarded with higher weighting for clutch points. once the clutch points for each shot are calculated, this is then added up and compared to the potential clutch points to produce a rating from 0-100. Below are some clutchness ratings for some notiable players:
 
-Example Evaluation Outputs
-
+Lebron James: 79.8
+Stephen Curry: 83.2
+Kevin Durant: 78.8
 
 🎓 Authors & Acknowledgments
 Created by Joel Sage. Based on publicly available NBA statistics. Special thanks to the Streamlit and streamviz teams for building interactive components and layout utilities.
